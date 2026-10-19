@@ -1,5 +1,7 @@
+
 "use client";
 
+import AddToCartButton from "../../../components/AddToCartButton";
 import Link from "next/link";
 import { Suspense } from "react";
 import { useParams } from "next/navigation";
@@ -88,15 +90,11 @@ function RestaurantContent() {
                   ${item.price.toFixed(2)}
                 </strong>
 
-                <button
-                  type="button"
-                  className="small-button"
-                  onClick={() =>
+                <AddToCartButton
+                  onAdd={() =>
                     addItem(item, restaurant.id)
                   }
-                >
-                  + Add to Cart
-                </button>
+                />
               </div>
             </div>
           </article>

@@ -1,3 +1,4 @@
+
 "use client";
 
 import Link from "next/link";
@@ -17,14 +18,16 @@ export default function Home() {
   ];
 
   const filteredRestaurants = useMemo(() => {
+    const searchTerm = search.trim().toLowerCase();
+
     return restaurants.filter((restaurant) => {
       const matchesSearch =
         restaurant.name
           .toLowerCase()
-          .includes(search.toLowerCase()) ||
+          .includes(searchTerm) ||
         restaurant.category
           .toLowerCase()
-          .includes(search.toLowerCase());
+          .includes(searchTerm);
 
       const matchesCategory =
         category === "All" ||
@@ -33,6 +36,14 @@ export default function Home() {
       return matchesSearch && matchesCategory;
     });
   }, [search, category]);
+
+  const hasActiveFilters =
+    search.trim() !== "" || category !== "All";
+
+  function clearFilters() {
+    setSearch("");
+    setCategory("All");
+  }
 
   return (
     <main>
@@ -54,7 +65,10 @@ export default function Home() {
               your favorite meals without leaving home.
             </p>
 
-            <a href="#restaurants" className="primary-button">
+            <a
+              href="#restaurants"
+              className="primary-button"
+            >
               Explore Restaurants
             </a>
           </div>
@@ -73,12 +87,21 @@ export default function Home() {
       >
         <div className="section-heading">
           <div>
-            <span className="eyebrow">EXPLORE FOODDASH</span>
+            <span className="eyebrow">
+              EXPLORE FOODDASH
+            </span>
+
             <h2>Restaurants near you</h2>
-            <p>Find something delicious for every craving.</p>
+
+            <p>
+              Find something delicious for every craving.
+            </p>
           </div>
 
-          <Link href="/cart" className="cart-shortcut">
+          <Link
+            href="/cart"
+            className="cart-shortcut"
+          >
             🛒 Cart ({count})
           </Link>
         </div>
@@ -88,7 +111,9 @@ export default function Home() {
             type="search"
             placeholder="Search restaurants or cuisines..."
             value={search}
-            onChange={(event) => setSearch(event.target.value)}
+            onChange={(event) =>
+              setSearch(event.target.value)
+            }
             aria-label="Search restaurants"
           />
         </div>
@@ -110,6 +135,29 @@ export default function Home() {
           ))}
         </div>
 
+        <div className="search-results-toolbar">
+          <p
+            className="search-results-count"
+            role="status"
+          >
+            {filteredRestaurants.length}{" "}
+            {filteredRestaurants.length === 1
+              ? "restaurant"
+              : "restaurants"}{" "}
+            found
+          </p>
+
+          {hasActiveFilters && (
+            <button
+              type="button"
+              className="clear-filters-button"
+              onClick={clearFilters}
+            >
+              Clear Filters
+            </button>
+          )}
+        </div>
+
         <div className="restaurant-grid">
           {filteredRestaurants.map((restaurant) => (
             <Link
@@ -124,6 +172,7 @@ export default function Home() {
               <div className="restaurant-details">
                 <div className="restaurant-title-row">
                   <h3>{restaurant.name}</h3>
+
                   <span className="rating">
                     ★ {restaurant.rating}
                   </span>
@@ -138,9 +187,13 @@ export default function Home() {
 
                 <div className="restaurant-bottom">
                   <span>
-                    Delivery ${restaurant.deliveryFee.toFixed(2)}
+                    Delivery $
+                    {restaurant.deliveryFee.toFixed(2)}
                   </span>
-                  <span className="view-menu">View menu →</span>
+
+                  <span className="view-menu">
+                    View menu →
+                  </span>
                 </div>
               </div>
             </Link>
@@ -150,7 +203,18 @@ export default function Home() {
         {filteredRestaurants.length === 0 && (
           <div className="empty-state">
             <h3>No restaurants found</h3>
-            <p>Try another search or category.</p>
+
+            <p>
+              Try another search or category.
+            </p>
+
+            <button
+              type="button"
+              className="clear-filters-button"
+              onClick={clearFilters}
+            >
+              Show All Restaurants
+            </button>
           </div>
         )}
       </section>
